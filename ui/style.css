@@ -1,0 +1,553 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  background: #1e1e1e;
+  color: #eeeeee;
+  overflow: hidden;
+}
+
+#app {
+  display: flex;
+  height: 100%;
+}
+
+#canvas-wrap {
+  position: relative;
+  flex: 1;
+  display: flex;
+  background: #111;
+  min-width: 0;
+}
+
+#canvas-viewport {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: default;
+  touch-action: none;
+}
+
+#canvas-img {
+  max-width: 100%;
+  max-height: 100%;
+  transform-origin: center center;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+#canvas-overlay {
+  position: absolute;
+  display: none;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#canvas-toolbar {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: rgba(30, 30, 30, 0.85);
+  border: 1px solid #444;
+  border-radius: 4px;
+}
+
+#canvas-toolbar button {
+  font: inherit;
+  padding: 4px 8px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #333;
+  color: #eee;
+  cursor: pointer;
+}
+
+#canvas-toolbar button:hover:not(:disabled) {
+  background: #444;
+}
+
+#canvas-toolbar button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+#canvas-toolbar button.active {
+  background: #b86b1f;
+  border-color: #b86b1f;
+}
+
+#draw-hint {
+  display: none;
+  max-width: 360px;
+  color: #ccc;
+  font-size: 11px;
+}
+
+#canvas-viewport.draw-mode {
+  cursor: crosshair;
+}
+
+#sidebar {
+  width: 400px;
+  flex-shrink: 0;
+  background: #252526;
+  border-left: 1px solid #444;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+#model-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px;
+  border-bottom: 1px solid #444;
+}
+
+#model-label {
+  font-weight: bold;
+}
+
+#pipeline {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border-bottom: 1px solid #444;
+}
+
+#pipeline button,
+#image-toggle button,
+#tabs .tab {
+  font: inherit;
+  padding: 6px 8px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #333;
+  color: #eee;
+  cursor: pointer;
+  text-align: left;
+}
+
+#pipeline button:disabled,
+#image-toggle button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+#pipeline button:not(:disabled):hover,
+#image-toggle button:not(:disabled):hover,
+#tabs .tab:hover {
+  background: #444;
+}
+
+#upscale-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-bottom: 1px solid #444;
+}
+
+#upscale-row label {
+  color: #ccc;
+}
+
+#upscale-factor {
+  font: inherit;
+  padding: 4px 6px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #333;
+  color: #eee;
+  cursor: pointer;
+}
+
+#upscale-factor:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+#final-size {
+  margin-left: auto;
+  color: #9ad29a;
+  font-size: 11px;
+}
+
+#final-size.warn {
+  color: #e6b450;
+}
+
+#image-toggle {
+  display: flex;
+  gap: 6px;
+  padding: 10px;
+  border-bottom: 1px solid #444;
+}
+
+#image-toggle button {
+  flex: 1;
+  text-align: center;
+}
+
+#image-toggle button.active {
+  background: #2a6fbb;
+  border-color: #2a6fbb;
+}
+
+#tabs {
+  display: flex;
+  border-bottom: 1px solid #444;
+}
+
+#tabs .tab {
+  flex: 1;
+  border: none;
+  border-right: 1px solid #444;
+  border-radius: 0;
+}
+
+#tabs .tab.active {
+  background: #2a6fbb;
+}
+
+#tab-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.tab-panel {
+  display: none;
+  padding: 10px;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+#context-panel {
+  white-space: pre-wrap;
+  background: #1e1e1e;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 8px;
+  max-height: 40vh;
+  overflow-y: auto;
+  font-family: Consolas, monospace;
+  font-size: 12px;
+}
+
+#table-wrap {
+  border: 1px solid #444;
+  border-radius: 4px;
+  overflow: auto;
+  max-height: 50vh;
+}
+
+#text-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#text-table th,
+#text-table td {
+  border-bottom: 1px solid #444;
+  padding: 4px 6px;
+  text-align: left;
+  vertical-align: top;
+}
+
+#text-table th {
+  position: sticky;
+  top: 0;
+  background: #333;
+}
+
+#text-table .text-cell {
+  cursor: text;
+  white-space: pre-wrap;
+}
+
+#text-table .text-cell.editing {
+  outline: 1px solid #2a6fbb;
+  outline-offset: -1px;
+  background: #2d2d30;
+}
+
+#text-table .text-cell.ai-modified {
+  color: #60a5fa;
+}
+
+#text-table .y-cell {
+  width: 64px;
+  text-align: center;
+}
+
+#text-table .flag-cell {
+  width: 46px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#text-table .flag-col {
+  width: 46px;
+  text-align: center;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+#text-table .flag-cell input {
+  cursor: pointer;
+}
+
+#text-table tbody tr:hover {
+  background: #2d2d30;
+}
+
+#edit-hint {
+  color: #888;
+  font-size: 11px;
+  margin: 6px 0 0;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Symbols tab                                                            */
+/* ---------------------------------------------------------------------- */
+#symbol-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+#symbol-controls button {
+  font: inherit;
+  padding: 5px 8px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #333;
+  color: #eee;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+#symbol-controls button:not(:disabled):hover {
+  background: #444;
+}
+
+#symbol-controls button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+#symbol-controls label {
+  color: #ccc;
+  font-size: 11px;
+}
+
+#symbol-matcher {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  padding: 4px 6px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #333;
+  color: #eee;
+  cursor: pointer;
+}
+
+#symbol-matcher:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+#symbol-status {
+  min-height: 2.8em;
+  margin-bottom: 8px;
+  color: #9aa;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+#symbol-status.warn {
+  color: #e6b450;
+}
+
+#symbol-status.ok {
+  color: #9ad29a;
+}
+
+#symbol-table-wrap {
+  border: 1px solid #444;
+  border-radius: 4px;
+  overflow: auto;
+  max-height: 52vh;
+}
+
+#symbol-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+#symbol-table th,
+#symbol-table td {
+  border-bottom: 1px solid #444;
+  padding: 4px 5px;
+  text-align: left;
+  vertical-align: top;
+}
+
+#symbol-table th {
+  position: sticky;
+  top: 0;
+  background: #333;
+  font-size: 11px;
+  z-index: 1;
+}
+
+#symbol-table .symbol-thumb-col {
+  width: 48px;
+}
+
+#symbol-table .symbol-actions-col {
+  width: 24px;
+}
+
+#symbol-table .flag-col {
+  width: 42px;
+}
+
+#symbol-table .symbol-thumb {
+  display: block;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  background: #d6d2c8;
+  border-radius: 3px;
+}
+
+#symbol-table .symbol-thumb-placeholder {
+  display: block;
+  width: 36px;
+  height: 36px;
+  line-height: 34px;
+  text-align: center;
+  color: #e6b450;
+  background: #3a3428;
+  border: 1px dashed #8a6d34;
+  border-radius: 3px;
+  font-size: 16px;
+}
+
+#symbol-table .symbol-match-cell select {
+  width: 100%;
+  min-width: 0;
+  font: inherit;
+  padding: 3px 4px;
+  border: 1px solid #555;
+  border-radius: 3px;
+  background: #333;
+  color: #eee;
+  cursor: pointer;
+}
+
+.symbol-meta {
+  margin-top: 3px;
+  color: #9aa;
+  font-size: 10px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.symbol-meta .warn {
+  color: #e6b450;
+}
+
+.symbol-meta .link {
+  display: block;
+  margin-top: 2px;
+  font: inherit;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #60a5fa;
+  cursor: pointer;
+  text-align: left;
+  text-decoration: underline;
+}
+
+.symbol-row.unassigned td {
+  background: rgba(230, 180, 80, 0.07);
+}
+
+#symbol-table .symbol-delete {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid #555;
+  border-radius: 3px;
+  background: #333;
+  color: #ccc;
+  cursor: pointer;
+  line-height: 1;
+}
+
+#symbol-table .symbol-delete:hover {
+  background: #7a2e2e;
+  border-color: #a44;
+  color: #fff;
+}
+
+#symbol-table .flag-cell {
+  text-align: center;
+  vertical-align: middle;
+}
+
+#symbol-table .flag-cell input {
+  cursor: pointer;
+}
+
+#symbol-table tbody tr:hover {
+  background: #2d2d30;
+}
+
+.symbol-empty {
+  color: #888;
+  font-size: 11px;
+  text-align: center;
+  padding: 14px 8px !important;
+}
+
+#symbol-hint {
+  color: #888;
+  font-size: 11px;
+  margin: 6px 0 0;
+}
+
+#tabs .tab.symbol-warn {
+  color: #e6b450;
+}

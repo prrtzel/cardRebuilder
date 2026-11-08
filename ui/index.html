@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Primal Card Rebuilder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="canvas-wrap">
+      <div id="canvas-viewport">
+        <img id="canvas-img" src="" alt="Card preview" draggable="false" />
+        <canvas id="canvas-overlay"></canvas>
+      </div>
+      <div id="canvas-toolbar">
+        <button id="btn-draw-mask" type="button" title="Draw extra regions into the inpaint mask">✏️ Draw mask box</button>
+        <button id="btn-draw-symbol" type="button" title="Draw a box around a symbol to replace with golden artwork">🔣 Draw symbol box</button>
+        <button id="btn-clear-mask" type="button" title="Remove all manually drawn mask boxes">Clear</button>
+        <span id="draw-hint">Drag on the image to mask a region. Right-click a drawn box to delete it.</span>
+      </div>
+    </div>
+
+    <div id="sidebar">
+      <div id="model-row">
+        <span id="model-label">Model: Checking...</span>
+        <button id="btn-refresh-model" type="button">🔄 Refresh Model Info</button>
+      </div>
+
+      <div id="pipeline">
+        <button id="btn-load" type="button">1. Load Image</button>
+        <button id="btn-ocr" type="button" disabled>2. Run OCR</button>
+        <button id="btn-ai-fix" type="button" disabled>✨ 3. AI Fix Text</button>
+        <button id="btn-render" type="button" disabled>4. Inpaint &amp; Render</button>
+        <button id="btn-inpaint" type="button" disabled title="Regenerate the clean background without redrawing text">↻ Update Clean BG only</button>
+      </div>
+
+      <div id="upscale-row">
+        <label for="upscale-factor">Upscale</label>
+        <select id="upscale-factor" title="Real-ESRGAN upscale applied to the clean background before text is drawn">
+          <option value="1">Off (1x)</option>
+          <option value="2">2x</option>
+          <option value="4" selected>4x</option>
+        </select>
+        <span id="final-size"></span>
+      </div>
+
+      <div id="image-toggle">
+        <button type="button" class="active" data-name="original" disabled>Original</button>
+        <button type="button" data-name="clean" disabled>Clean BG</button>
+        <button type="button" data-name="final" disabled>Final</button>
+      </div>
+
+      <div id="tabs">
+        <button type="button" class="tab active" data-tab="editor">Text Editor</button>
+        <button type="button" class="tab" data-tab="context">AI Context</button>
+        <button type="button" class="tab" data-tab="symbols">Symbols</button>
+      </div>
+
+      <div id="tab-content">
+        <div id="tab-panel-editor" class="tab-panel active">
+          <div id="table-wrap">
+            <table id="text-table">
+              <thead>
+                <tr>
+                  <th class="flag-col" title="Include this region in the inpaint mask">Mask</th>
+                  <th class="flag-col" title="Redraw this text on the rebuilt card">Redraw</th>
+                  <th>Text</th>
+                  <th>Y</th>
+                </tr>
+              </thead>
+              <tbody id="table-body"></tbody>
+            </table>
+          </div>
+          <p id="edit-hint">Click a cell to edit. Enter commits, Esc cancels. Hover a row to highlight its region.</p>
+        </div>
+        <div id="tab-panel-context" class="tab-panel">
+          <pre id="context-panel">No AI context yet. Run "AI Fix Text" to retrieve rulebook chunks.</pre>
+        </div>
+        <div id="tab-panel-symbols" class="tab-panel">
+          <div id="symbol-controls">
+            <button id="btn-detect-symbols" type="button" disabled>Detect Symbols</button>
+            <label for="symbol-matcher">Matcher</label>
+            <select id="symbol-matcher" title="AI + Template uses Qwen3-VL for identification and template matching for precise boxes; Template only never calls the AI.">
+              <option value="ai" selected>AI + Template</option>
+              <option value="template">Template only</option>
+            </select>
+          </div>
+          <div id="symbol-status">Load a card, then detect symbols.</div>
+          <div id="symbol-table-wrap">
+            <table id="symbol-table">
+              <thead>
+                <tr>
+                  <th class="symbol-thumb-col">Golden</th>
+                  <th>Match</th>
+                  <th class="flag-col" title="Replace the original symbol on the rebuilt card">Redraw</th>
+                  <th class="symbol-actions-col"></th>
+                </tr>
+              </thead>
+              <tbody id="symbol-table-body"></tbody>
+            </table>
+          </div>
+          <p id="symbol-hint">Use <b>Draw symbol box</b> on the canvas to add a manual box. Hover a row to highlight its region; right-click a manual box to delete it. Inline symbols inside rules text are not handled yet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

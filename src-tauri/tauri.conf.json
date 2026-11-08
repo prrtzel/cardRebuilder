@@ -1,0 +1,23 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Primal Card Rebuilder",
+  "version": "0.1.0",
+  "identifier": "com.primal.cardrebuilder",
+  "build": { "frontendDist": "../ui" },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [{
+      "title": "Primal Card Rebuilder",
+      "width": 1400,
+      "height": 900,
+      "resizable": true
+    }],
+    "security": { "csp": null }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "externalBin": ["binaries/primal-backend"],
+    "resources": []
+  }
+}

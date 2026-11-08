@@ -1,0 +1,25 @@
+README.md
+
+# Python
+__pycache__/
+*.pyc
+
+
+# Runtime artifacts
+output/
+
+# Rust / Tauri
+src-tauri/target/
+src-tauri/gen/
+src-tauri/binaries/
+
+# Python venv
+venv/
+
+# Misc
+*.log
+card.png
+python-backend/data/
+python-backend/fonts/
+python-backend/models/
+python-backend/symbols/
